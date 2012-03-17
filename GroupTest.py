@@ -25,17 +25,17 @@ class GroupTest(unittest.TestCase):
 
 	def test_get_competence(self):
 		group = Group(self.staffs)
-		group.set_member('Major-1', 'TsaiSong')
-		group.set_member('Major-2', 'GordonLi')
-		group.set_member('Backup', 'YanGao')
+		group.set_member('TsaiSong', 'Major')
+		group.set_member('GordonLi', 'Major')
+		group.set_member('YanGao', 'Backup')
 		self.assertEqual(0.9, group.get_competence('MSC'))
 		self.assertEqual(0.8, group.get_competence('NGW'))
 
 	def test_duplicate_staff(self):
 		group = Group(self.staffs)
-		group.set_member('Major-1', 'TsaiSong')
-		group.set_member('Major-2', 'GordonLi')
-		self.assertRaises(ValueError, lambda : group.set_member('Backup', 'TsaiSong'))
+		group.set_member('TsaiSong', 'Major')
+		group.set_member('GordonLi', 'Major')
+		self.assertRaises(ValueError, lambda : group.set_member('TsaiSong', 'Backup'))
 
 if __name__ == '__main__':
     unittest.main()

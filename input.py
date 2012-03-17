@@ -5,32 +5,45 @@ import datetime
 
 iteration_begin_date = datetime.datetime(2012, 4, 2)
 
-# days in each iterations
-iteration_days = [7, 7, 7, 7]
-
-# exclude from schedule: (iteration_id, staff_name)
-schedule_exclude = [
-	(0, "YanGao"),
-	(0, "JinLiangLi"),
-	(0, "KennyHuang"),
-	(0, "TomZhou"),
-	(0, "DavidNong"),
-	(0, "GordonLi"),
-	(0, "JessicaXie"),
-	(0, "TsaiSong"),
-	(1, "KennyHuang"),
-	(1, "TomZhou"),
-	(1, "DavidNong"),
-	(2, "KennyHuang"),
-	(2, "TomZhou"),
-	(2, "DavidNong"),
-	(2, "YanGao"),
-	(3, "KennyHuang"),
-	(3, "TomZhou"),
-	(3, "DavidNong"),
+iterations_definition = [
+	{
+		'days' : 7,
+		'pre_plan' : {
+			'YanGao' : 'NA',
+			'JinLiangLi' : 'NA',
+			'KennyHuang' : 'NA',
+			'TomZhou' : 'NA',
+			'DavidNong' : 'NA',
+			'GordonLi' : 'NA',
+			'JessicaXie' : 'NA',
+			'TsaiSong' : 'NA',
+		}
+	},
+	{
+		'days' : 7,
+		'pre_plan' : {
+			'KennyHuang' : 'NA',
+			'TomZhou' : 'NA',
+			'DavidNong' : 'NA',
+		}
+	},
+	{
+		'days' : 7,
+		'pre_plan' : {
+			'KennyHuang' : 'NA',
+			'TomZhou' : 'NA',
+			'DavidNong' : 'NA',
+		}
+	},
+	{
+		'days' : 7,
+		'pre_plan' : {
+			'KennyHuang' : 'NA',
+			'TomZhou' : 'NA',
+			'DavidNong' : 'NA',
+		}
+	},
 ]
-
-max_continuous_iterations = 2
 
 group_definition = {
 	'competence_requirement' : {

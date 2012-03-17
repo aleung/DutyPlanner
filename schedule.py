@@ -10,7 +10,7 @@ class Group:
 		# {staff_name : role}
 		self.members = {}
 
-	def set_member(self, role, staff):
+	def set_member(self, staff, role):
 		if staff in self.members.keys():
 			raise ValueError
 		self.members[staff] = role
@@ -22,42 +22,75 @@ class Group:
 		competences = [self.staffs[name]['competence'][area] for name in self.members.keys()]
 		return max(competences)
 
+	def __repr__(self):
+		return "Group: %s" % self.members
+
 
 class GroupBuilder():
 	def __init__(self, staffs, group_definition):
 		self.staffs = staffs
 		self.group_definition = group_definition
-		self.groups = []
+		self.qualified_groups = []
 
 	def build(self):
 		number_persons_in_group = sum(map(lambda r : r[1] , self.group_definition['roles']))
 		for staff_combination in itertools.combinations(self.staffs.keys(), number_persons_in_group):
-			self.build_groups(staff_combination)
-		return self.groups
+			self.__build_groups(staff_combination)
+		return self.qualified_groups
 
-	def build_groups(self, staff_combination):
+	def __build_groups(self, staff_combination):
 		combination_of_each_roles = []
 		for number_persons in map(lambda r : r[1] , self.group_definition['roles']):
 			combination_of_each_roles.append(list(itertools.combinations(staff_combination, number_persons)))
 		for cartesian_product in itertools.product(*combination_of_each_roles):
-			self.build_a_group([ staff for t in cartesian_product for staff in t ])
+			self.__build_a_group([ staff for t in cartesian_product for staff in t ])
 
-	def build_a_group(self, members_in_a_group):
+	def __build_a_group(self, members_in_a_group):
 		group = Group(self.staffs)
 		for (role, number_persons_in_group) in self.group_definition['roles']:
 			for i in range(number_persons_in_group):
 				try:
-					group.set_member(role, members_in_a_group.pop(0))
+					group.set_member(members_in_a_group.pop(0), role)
 				except ValueError:
 					return
-		if self.validate_group(group):
-			self.groups.append(group)
+		if self.__validate_group_competence(group):
+			self.qualified_groups.append(group)
 
-	def validate_group(self, group):
+	def __validate_group_competence(self, group):
 		competence_requirement = self.group_definition['competence_requirement']
 		for area in competence_requirement.keys():
 			if group.get_competence(area) < competence_requirement[area]:
 				return False
+		return True
+
+
+class IterationGroupCandidatesBuilder:
+	def __init__(self, qualified_groups):
+		self.qualified_groups = qualified_groups
+
+	def build_candidate_groups_for_iterations(self, iterations_definition):
+		groups_in_iterations = []
+		for iteration in iterations_definition:
+			groups_in_iterations.append(self.__get_candidate_groups(iteration['pre_plan']))
+		return groups_in_iterations
+
+	def __get_candidate_groups(self, pre_plan):
+		groups = []
+		for group in self.qualified_groups:
+			if self.__does_group_meet_pre_plan(group, pre_plan):
+				groups.append(group)
+		return groups
+
+	def __does_group_meet_pre_plan(self, group, pre_plan):
+		for pre_plan_member in pre_plan:
+			if pre_plan[pre_plan_member] == 'NA':
+				if pre_plan_member in group.get_members():
+					return False
+			else:
+				if pre_plan_member not in group.get_members():
+					return False
+				if pre_plan[pre_plan_member] != group.get_members()[pre_plan_member]:
+					return False
 		return True
 
 
@@ -81,9 +114,9 @@ class ScheduleBuilder():
 			if exclude_staffs.intersection(schedule[i].get_members().keys()):
 				return False
 			if i >= self.max_continuous_iterations:
-				for member in schedule[i].get_members().keys():					
+				for member in schedule[i].get_members():					
 					for prev in range(self.max_continuous_iterations):
-						if member in schedule[i-prev].get_members().keys:
+						if member in schedule[i-prev].get_members():
 							return False
 		return True
 
