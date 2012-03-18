@@ -3,7 +3,7 @@
 import datetime
 
 
-iteration_begin_date = datetime.datetime(2012, 4, 2)
+iteration_begin_date = datetime.date(2012, 4, 2)
 
 iterations_definition = [
 	{
@@ -16,7 +16,18 @@ iterations_definition = [
 			'DavidNong' : 'NA',
 			'GordonLi' : 'NA',
 			'JessicaXie' : 'NA',
-			'TsaiSong' : 'NA',
+			'TsaiSong' : 'Backup',
+			'KacyLiu' : 'Main',
+		}
+	},
+	{
+		'days' : 7,
+		'pre_plan' : {
+			'JinLiangLi' : 'NA',
+			'KennyHuang' : 'NA',
+			'TomZhou' : 'NA',
+			'DavidNong' : 'NA',
+			'YanGao' : 'Main',
 		}
 	},
 	{
@@ -25,14 +36,7 @@ iterations_definition = [
 			'KennyHuang' : 'NA',
 			'TomZhou' : 'NA',
 			'DavidNong' : 'NA',
-		}
-	},
-	{
-		'days' : 7,
-		'pre_plan' : {
-			'KennyHuang' : 'NA',
-			'TomZhou' : 'NA',
-			'DavidNong' : 'NA',
+			'YanGao' : 'NA',
 		}
 	},
 	{
@@ -48,10 +52,10 @@ iterations_definition = [
 group_definition = {
 	'competence_requirement' : {
 		'MSC' : 0.75 ,
-		'NGW' : 0.75 ,	
+		'MGW' : 0.75 ,	
 	},
 	'roles' : [
-		('Major', 2),
+		('Main', 2),
 		('Backup', 1),
 	]
 }
@@ -60,64 +64,64 @@ staffs = {
 	'TsaiSong' : {
 		'competence' : {
 			'MSC' : 0.85 ,
-			'NGW' : 0.85 ,
+			'MGW' : 0.85 ,
 		},
 	},
 	'GordonLi' : {
 		'competence' : {
 			'MSC' : 0.85 ,
-			'NGW' : 0.85 ,
+			'MGW' : 0.85 ,
 		},
 	},
 	'YanGao' : {
 		'competence' : {
 			'MSC' : 0.75 ,
-			'NGW' : 0.1 ,
+			'MGW' : 0.1 ,
 		},
 	},
 	'TomZhou' : {
 		'competence' : {
 			'MSC' : 0.85 ,
-			'NGW' : 0.75 ,
+			'MGW' : 0.75 ,
 		},
 	},
 	'JinLiangLi' : {
 		'competence' : {
 			'MSC' : 0.7 ,
-			'NGW' : 0.7 ,
+			'MGW' : 0.7 ,
 		},
 	},
 	'RyanWeng' : {
 		'competence' : {
 			'MSC' : 0.7 ,
-			'NGW' : 0.7 ,
+			'MGW' : 0.7 ,
 		},
 	},
 	'KennyHuang' : {
 		'competence' : {
 			'MSC' : 0.65 ,
-			'NGW' : 0.65,
+			'MGW' : 0.65,
 		},
 	},
 	'KacyLiu' : {
 		'competence' : {
 			'MSC' : 0.7 ,
-			'NGW' : 0.7 ,
+			'MGW' : 0.7 ,
 		},
 	},
 	'DavidNong' : {
 		'competence' : {
 			'MSC' : 0.6 ,
-			'NGW' : 0.6 ,
+			'MGW' : 0.6 ,
 		},
 	},
 	'JessicaXie' : {
 		'competence' : {
 			'MSC' : 0.1 ,
-			'NGW' : 0.7 ,
+			'MGW' : 0.7 ,
 		},
 	},
 }
 
-competence_areaes = ['MSC', 'NGW']
+competence_areaes = ['MSC', 'MGW']
 

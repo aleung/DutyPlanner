@@ -52,7 +52,7 @@ class IterationGroupCandidatesBuilderTest(unittest.TestCase):
 	def test_build(self):
 		groups = self.__prepare_groups()
 		builder = IterationGroupCandidatesBuilder(groups)
-		candidates_of_iterations = builder.build_candidate_groups_for_iterations(self.iterations_definition)
+		candidates_of_iterations = builder.build(self.iterations_definition)
 		self.assertEqual(2, len(candidates_of_iterations))
 		for candidates in candidates_of_iterations:
 			print candidates

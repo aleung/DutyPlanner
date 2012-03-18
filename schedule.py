@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 
 import itertools
+import random
+import datetime
 import input
 
 
@@ -68,7 +70,7 @@ class IterationGroupCandidatesBuilder:
 	def __init__(self, qualified_groups):
 		self.qualified_groups = qualified_groups
 
-	def build_candidate_groups_for_iterations(self, iterations_definition):
+	def build(self, iterations_definition):
 		groups_in_iterations = []
 		for iteration in iterations_definition:
 			groups_in_iterations.append(self.__get_candidate_groups(iteration['pre_plan']))
@@ -95,48 +97,88 @@ class IterationGroupCandidatesBuilder:
 
 
 class ScheduleBuilder():
-	def __init__(self, groups, number_of_iterations, schedule_exclude, max_continuous_iterations):
-		self.groups = groups
-		self.number_of_iterations = number_of_iterations
-		self.schedule_exclude = schedule_exclude
-		self.max_continuous_iterations = max_continuous_iterations
-		self.schedules = []
+	def __init__(self, groups_in_iterations):
+		self.groups_in_iterations = groups_in_iterations
+		self.schedule = []
 
 	def build(self):
-		for schedule in itertools.permutations(self.groups, self.number_of_iterations):
-			if self.validate_schedule(schedule):
-				self.schedules.append(schedule)
-		return self.schedules
+		self.__shuffle_groups()
+		if self.__schedule_iteration(0):
+			return self.schedule
+		else:
+			return None
 
-	def validate_schedule(self, schedule):
-		for i in range(self.number_of_iterations):
-			exclude_staffs = set([ name for (iteration, name) in self.schedule_exclude if iteration == i ])
-			if exclude_staffs.intersection(schedule[i].get_members().keys()):
-				return False
-			if i >= self.max_continuous_iterations:
-				for member in schedule[i].get_members():					
-					for prev in range(self.max_continuous_iterations):
-						if member in schedule[i-prev].get_members():
-							return False
-		return True
+	def __schedule_iteration(self, iteration_id):
+		''' Returns: True - solution found; False - unable to schedule '''
+		if iteration_id == len(groups_in_iterations):
+			return True
+		for group in self.groups_in_iterations[iteration_id]:
+			if not self.__is_group_overload(group, iteration_id):
+				self.schedule.append(group)
+				if self.__schedule_iteration(iteration_id + 1):
+					return True
+				else:
+					self.schedule.pop()
+		return False
+
+	def __shuffle_groups(self):
+		for i in range(len(self.groups_in_iterations)):
+			random.shuffle(groups_in_iterations[i])
+
+	def __is_group_overload(self, group, iteration_id):
+		if iteration_id == 0:
+			return False
+		prev_iteration_members = set(self.schedule[iteration_id - 1].get_members().keys())
+		return prev_iteration_members.intersection(group.get_members().keys())
+
 
 
 class SchedulePrinter():
-	def __init__(self):
-		pass
+	def __init__(self, schedule, iterations_definition, begin_date, staffs):
+		self.schedule = schedule
+		self.iterations_definition = iterations_definition
+		self.begin_date = begin_date
+		self.staffs = staffs
 
-	def print_schedule(self, schedule):
-		for num in range(len(schedule)):
-			print "Iteration " + num
-			print schedule[num].get_members
-		pass #TODO
+	def print_schedule(self):
+		if self.schedule == None:
+			print "No way to schedule."
+			return
+		self.__print_header()
+		from_date = self.begin_date
+		for i in range(len(self.schedule)):
+			to_date = from_date + datetime.timedelta(days=self.iterations_definition[i]['days']-1)
+			self.__print_iteration(from_date, to_date, i)
+			from_date += datetime.timedelta(days=self.iterations_definition[i]['days'])
+
+	def __print_header(self):
+		output = '|'.rjust(25)
+		for staff in self.staffs:
+			output += ' %10s |' % staff
+		print output
+
+	def __print_iteration(self, from_date, to_date, iteration):
+		output = '%s - %s |' % (str(from_date), str(to_date))
+		for staff in self.staffs:
+			preplanned = staff in self.iterations_definition[iteration]['pre_plan']
+
+			if staff in self.schedule[iteration].get_members():
+				output += ' %10s |' % (('* ' if preplanned else '') + self.schedule[iteration].get_members()[staff])
+			else:
+				output += (('* ' if preplanned else '') + '|').rjust(13)
+		print output
 
 
 if __name__ == "__main__":
 	groups = GroupBuilder(input.staffs, input.group_definition).build()
 	print "%d group options available." % len(groups)
-	schedules = ScheduleBuilder(groups, len(input.iteration_days), input.schedule_exclude, input.max_continuous_iterations).build()
-	printer = SchedulePrinter()
-	for schedule in schedules:
-		printer.print_schedule(schedule)
-	pass
+	groups_in_iterations = IterationGroupCandidatesBuilder(groups).build(input.iterations_definition)
+
+	for i in range(len(input.iterations_definition)):
+		print "Iteration #%i - %i candidate groups." % (i, len(groups_in_iterations[i]))
+
+	print
+
+	schedule = ScheduleBuilder(groups_in_iterations).build()
+	printer = SchedulePrinter(schedule, input.iterations_definition, input.iteration_begin_date, input.staffs)
+	printer.print_schedule()
