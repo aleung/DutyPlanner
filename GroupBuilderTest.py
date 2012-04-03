@@ -34,10 +34,22 @@ class GroupBuilderTest(unittest.TestCase):
 			'MSC' : 0.8 ,
 			'NGW' : 0.8 ,	
 		},
-		'roles' : [
-			('Major', 2),
-			('Backup', 1),
-		]
+		'roles' : {
+			'Main' : {
+				'persons' : 2,
+				'competence_requirement' : {
+					'MSC' : 0.6 ,
+					'NGW' : 0.6 ,	
+				}			
+			},
+			'Backup' : {
+				'persons' : 1,
+				'competence_requirement' : {
+					'MSC' : 0.6 ,
+					'NGW' : 0 ,	
+				}			
+			}
+		}
 	}
 
 	def test_build(self):
@@ -45,7 +57,7 @@ class GroupBuilderTest(unittest.TestCase):
 		groups = builder.build()
 		for group in groups:
 			print 'Group %s, MSC %f, NGW %f' % (group.get_members(), group.get_competence('MSC'), group.get_competence('NGW'))
-		self.assertEqual(6, len(groups))
+		self.assertEqual(2, len(groups))
 
 if __name__ == '__main__':
     unittest.main()

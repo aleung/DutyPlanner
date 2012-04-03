@@ -24,6 +24,10 @@ class Group:
 		competences = [self.staffs[name]['competence'][area] for name in self.members.keys()]
 		return max(competences)
 
+	def get_role_competence(self, role, area):
+		competences = [self.staffs[name]['competence'][area] for name in self.members.keys() if self.members[name] == role]
+		return max(competences)
+
 	def __repr__(self):
 		return "Group: %s" % self.members
 
@@ -35,22 +39,28 @@ class GroupBuilder():
 		self.qualified_groups = []
 
 	def build(self):
-		number_persons_in_group = sum(map(lambda r : r[1] , self.group_definition['roles']))
+		number_persons_in_group = sum(self.__get_number_persons_roles())
 		for staff_combination in itertools.combinations(self.staffs.keys(), number_persons_in_group):
 			self.__build_groups(staff_combination)
 		return self.qualified_groups
 
+	def __get_role_list(self):
+		return self.group_definition['roles'].keys()
+
+	def __get_number_persons_roles(self):
+		return [self.group_definition['roles'][name]['persons'] for name in self.__get_role_list()]
+
 	def __build_groups(self, staff_combination):
 		combination_of_each_roles = []
-		for number_persons in map(lambda r : r[1] , self.group_definition['roles']):
+		for number_persons in self.__get_number_persons_roles():
 			combination_of_each_roles.append(list(itertools.combinations(staff_combination, number_persons)))
 		for cartesian_product in itertools.product(*combination_of_each_roles):
 			self.__build_a_group([ staff for t in cartesian_product for staff in t ])
 
 	def __build_a_group(self, members_in_a_group):
 		group = Group(self.staffs)
-		for (role, number_persons_in_group) in self.group_definition['roles']:
-			for i in range(number_persons_in_group):
+		for role in self.__get_role_list():
+			for i in range(self.group_definition['roles'][role]['persons']):
 				try:
 					group.set_member(members_in_a_group.pop(0), role)
 				except ValueError:
@@ -59,9 +69,15 @@ class GroupBuilder():
 			self.qualified_groups.append(group)
 
 	def __validate_group_competence(self, group):
-		competence_requirement = self.group_definition['competence_requirement']
+		for role in self.__get_role_list():
+			role_competence_requirement = self.group_definition['roles'][role]['competence_requirement']
+			if not self.__validate_competence(role_competence_requirement, lambda area : group.get_role_competence(role, area)):
+				return False
+		return self.__validate_competence(self.group_definition['competence_requirement'], lambda area : group.get_competence(area))
+
+	def __validate_competence(self, competence_requirement, get_competence):
 		for area in competence_requirement.keys():
-			if group.get_competence(area) < competence_requirement[area]:
+			if get_competence(area) < competence_requirement[area]:
 				return False
 		return True
 

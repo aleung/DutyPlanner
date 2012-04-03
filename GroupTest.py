@@ -30,6 +30,7 @@ class GroupTest(unittest.TestCase):
 		group.set_member('YanGao', 'Backup')
 		self.assertEqual(0.9, group.get_competence('MSC'))
 		self.assertEqual(0.8, group.get_competence('NGW'))
+		self.assertEqual(0.6, group.get_role_competence('Major', 'NGW'))
 
 	def test_duplicate_staff(self):
 		group = Group(self.staffs)

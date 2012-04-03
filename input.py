@@ -54,10 +54,22 @@ group_definition = {
 		'MSC' : 0.75 ,
 		'MGW' : 0.75 ,	
 	},
-	'roles' : [
-		('Main', 2),
-		('Backup', 1),
-	]
+	'roles' : {
+		'Main' : {
+			'persons' : 2,
+			'competence_requirement' : {
+				'MSC' : 0.6 ,
+				'MGW' : 0.6 ,	
+			}			
+		},
+		'Backup' : {
+			'persons' : 1,
+			'competence_requirement' : {
+				'MSC' : 0.6 ,
+				'MGW' : 0 ,	
+			}			
+		}
+	}
 }
 
 staffs = {
