@@ -40,14 +40,14 @@ class GroupBuilderTest(unittest.TestCase):
 				'competence_requirement' : {
 					'MSC' : 0.6 ,
 					'NGW' : 0.6 ,	
-				}			
+				}
 			},
 			'Backup' : {
 				'persons' : 1,
 				'competence_requirement' : {
 					'MSC' : 0.6 ,
 					'NGW' : 0 ,	
-				}			
+				}
 			}
 		}
 	}

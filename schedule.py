@@ -150,22 +150,39 @@ class ScheduleBuilder():
 
 
 class SchedulePrinter():
-	def __init__(self, schedule, iterations_definition, begin_date, staffs):
+	def __init__(self, schedule, iterations_definition, begin_date, staffs, allowance):
 		self.schedule = schedule
 		self.iterations_definition = iterations_definition
 		self.begin_date = begin_date
 		self.staffs = staffs
+		self.allowance = allowance
 
 	def print_schedule(self):
 		if self.schedule == None:
 			print "No way to schedule."
 			return
 		self.__print_header()
+		self.__print_seperator()
 		from_date = self.begin_date
 		for i in range(len(self.schedule)):
 			to_date = from_date + datetime.timedelta(days=self.iterations_definition[i]['days']-1)
 			self.__print_iteration(from_date, to_date, i)
 			from_date += datetime.timedelta(days=self.iterations_definition[i]['days'])
+		self.__print_seperator()
+		self.__print_allowance()
+
+
+	def __print_allowance(self):
+		output = 'Allowance |'.rjust(25)
+		for staff in self.staffs:
+			output += ' %10i |' % self.allowance[staff]
+		print output
+
+	def __print_seperator(self):
+		output = '|'.rjust(25)
+		for staff in self.staffs:
+			output += '------------|'
+		print output
 
 	def __print_header(self):
 		output = '|'.rjust(25)
@@ -185,6 +202,24 @@ class SchedulePrinter():
 		print output
 
 
+class AllowanceCalculator:
+	def __init__(self, staffs, iterations_definition):
+		self.staffs = staffs
+		self.iterations_definition = iterations_definition
+
+	def calc(self, schedule):
+		# TODO: what's the simple way to fill the map?
+		allowance = {}
+		for name in self.staffs.keys():
+			allowance[name] = 0
+
+		for iteration in range(len(schedule)):
+			group = schedule[iteration].get_members()
+			for name in group.keys():
+				allowance[name] += self.iterations_definition[iteration]['allowance'][group[name]]
+		return allowance
+
+
 if __name__ == "__main__":
 	groups = GroupBuilder(input.staffs, input.group_definition).build()
 	print "%d group options available." % len(groups)
@@ -196,5 +231,8 @@ if __name__ == "__main__":
 	print
 
 	schedule = ScheduleBuilder(groups_in_iterations).build()
-	printer = SchedulePrinter(schedule, input.iterations_definition, input.iteration_begin_date, input.staffs)
+
+	allowance = AllowanceCalculator(input.staffs, input.iterations_definition).calc(schedule)
+	printer = SchedulePrinter(schedule, input.iterations_definition, input.iteration_begin_date, input.staffs, allowance)
 	printer.print_schedule()
+

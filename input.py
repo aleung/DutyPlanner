@@ -18,6 +18,10 @@ iterations_definition = [
 			'JessicaXie' : 'NA',
 			'TsaiSong' : 'Backup',
 			'KacyLiu' : 'Main',
+		},
+		'allowance' : {
+			'Main' : 350*7,
+			'Backup' : 50*5+200*2,
 		}
 	},
 	{
@@ -28,6 +32,10 @@ iterations_definition = [
 			'TomZhou' : 'NA',
 			'DavidNong' : 'NA',
 			'YanGao' : 'Main',
+		},
+		'allowance' : {
+			'Main' : 350*7,
+			'Backup' : 50*5+200*2,
 		}
 	},
 	{
@@ -37,6 +45,10 @@ iterations_definition = [
 			'TomZhou' : 'NA',
 			'DavidNong' : 'NA',
 			'YanGao' : 'NA',
+		},
+		'allowance' : {
+			'Main' : 350*7,
+			'Backup' : 50*5+200*2,
 		}
 	},
 	{
@@ -45,6 +57,10 @@ iterations_definition = [
 			'KennyHuang' : 'NA',
 			'TomZhou' : 'NA',
 			'DavidNong' : 'NA',
+		},
+		'allowance' : {
+			'Main' : 350*7,
+			'Backup' : 50*5+200*2,
 		}
 	},
 ]
